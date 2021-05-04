@@ -55,7 +55,24 @@ plotting.plot_roi(atlas_filename, title="Harvard Oxford atlas")
 ![corticalAtlas_Harvard-Oxford](/fig/episode_5/5_Fig3_corAtlas_Harvard-Oxford.png)
 
 
+##### Subcortical Parcellations
+###### CIT168 Reinforcement Learning Atlas (Pauli 2017)
+```
+dataset = datasets.fetch_atlas_pauli_2017()
+atlas_filename = dataset.maps 
+plotting.plot_prob_atlas(atlas_filename, title="Pauli 2017")
+```
+![subcorticalAtlas_Pauli](/fig/episode_5/5_Fig5_subAtlas_Pauli.png)
 
+#### 5.1.1.2. Regional volumetric differences in case-control cohorts
+
+
+### 5.1.2. Cortical surface parcellations 
+Cortical surfaces can be parcellated into anatomically and functionally meaningful regions. This fascilitates identification and characterization of morphometric and connectivity alterations in the brain that may occur as a result of a disease or aging. 
+For example utilities in the FreeSurfer software includes a technique for automatically assigning a neuroanatomical label to each location on a cortical surface model based on probabilistic information estimated from a manually labeled training set. As this procedure incorporates both geometric information derived from the cortical model, and neuroanatomical convention, the result is a complete labeling of cortical sulci and gyri.
+Some commonly used cortical surface parcellations are shown below. 
+
+#### 5.1.2.1. Visualizing cortical surface parcellations
 ###### Destrieux Atlas (Destrieux 2010)
 ```
 destrieux_atlas = datasets.fetch_atlas_surf_destrieux()
@@ -71,24 +88,6 @@ plotting.plot_surf_roi(fsaverage['pial_left'], roi_map=parcellation,hemi='left',
                        view='lateral',bg_map=fsaverage['sulc_left'], bg_on_data=True,darkness=.5)
 ```
 ![corticalAtlas_Destrieux](/fig/episode_5/5_Fig4_corAtlas_Destrieux.png)
-
-
-##### Subcortical Parcellations
-###### CIT168 Reinforcement Learning Atlas (Pauli 2017)
-```
-dataset = datasets.fetch_atlas_pauli_2017()
-atlas_filename = dataset.maps 
-plotting.plot_prob_atlas(atlas_filename, title="Pauli 2017")
-```
-![subcorticalAtlas_Pauli](/fig/episode_5/5_Fig5_subAtlas_Pauli.png)
-
-#### 5.1.1.2. Regional volumetric differences in case-control cohorts
-
-
-### 5.1.2. Cortical surface parcellations 
-
-
-#### 5.1.2.1. Visualizing cortical surfaces parcellations
 
 
 #### 5.1.2.2. Regional cortical thickness variation in developmental cohorts
