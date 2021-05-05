@@ -64,8 +64,48 @@ plotting.plot_prob_atlas(atlas_filename, title="Pauli 2017")
 ```
 ![subcorticalAtlas_Pauli](/fig/episode_5/5_Fig5_subAtlas_Pauli.png)
 
+
 #### 5.1.1.2. Regional volumetric differences in case-control cohorts
 
+In this section, we will discuss two cases.
+1) Volumetric alterations in the whole hippocampus 
+2) Volumetric alterations in hippocampal subfields 
+
+Segmentations in the examples discussed in this section was performed using MAGeTBrain, another commonly used segmentation software.
+
+#### **MAGeTbrain**
+Multiple Automatically Generated Templates Brain Segmentation Algorithm (MAGeTBrain), is a software developed by [CoBrA Lab](http://cobralab.ca/). 
+Given a set of labelled MR images (atlases) and unlabelled images (subjects), MAGeT produces a segmentation for each subject using a multi-atlas voting procedure based on a template library made up of images from the subject set. An overview of this method is shown in the figure below.
+
+<img src="/fig/episode_5/5_MAGeTOverview.png" width="480" height="400" />
+
+In MAGeT brain, segmentations from each atlas (typically manually delineated) are propogated via image registration to a subset of the subject images (known as the ‘template library’) before being propogated to each subject image and fused. By propogating labels to a template library, we are able to make use of the neuroanatomical variability of the subjects in order to ‘fine tune’ each individual subject’s segmentation. The github repository for MAGeTbrain can be found [here](https://github.com/CobraLab/MAGeTbrain).
+
+Note: volume is measured in voxels.
+
+Related citations:
+
+_M Mallar Chakravarty, Patrick Steadman, Matthijs C van Eede, Rebecca D Calcott, Victoria Gu, Philip Shaw, Armin Raznahan, D Louis Collins, and Jason P Lerch. Performing label-fusion-based segmentation using multiple automatically generated templates. Hum Brain Mapp, 34(10):2635–54, October 2013. [(doi:10.1002/hbm.22092)](https://onlinelibrary.wiley.com/doi/epdf/10.1002/hbm.22092)_
+
+_Jon Pipitone, Min Tae M Park, Julie Winterburn, Tristram A Lett, Jason P Lerch, Jens C Pruessner, Martin Lepage, Aristotle N Voineskos, and M Mallar Chakravarty. Multi-atlas segmentation of the whole hippocampus and subfields using multiple automatically generated templates. Neuroimage, 101:494–512, November 2014.
+[(doi:10.1016/j.neuroimage.2014.04.054)](https://www.sciencedirect.com/science/article/pii/S1053811914003346?via%3Dihub)_
+
+##### 1) Volumetric alterations in the whole hippocampus 
+
+##### Example 1: Whole hippocampal segmentation comparison across cohorts _[(Pipitone et al., 2014)](https://www.sciencedirect.com/science/article/pii/S1053811914003346?via%3Dihub)_)
+
+Sixty 1.5T images baseline scans were selected arbitrarily from the ADNI1: Complete 1Yr 1.5T standardized dataset. Twenty subjects were chosen from each disease category: cognitively normal (CN),mild cognitive impairment (MCI) and Alzheimer's disease (AD).
+
+MAGeT-Brain was applied to this dataset and the resulting segmentations werecompared to segmentations produced by FreeSurfer, FSLFIRST, MAPER, as well as semi-automated whole hippocampal segmentations (SNT) provided by ADNI. Examples for hippocampal segmentations and hippocampal volume measures obtained by different are shown in the Figures below.
+
+<img src="/fig/episode_5/5_VolAnalysis_Eg1.png" width="600" height="560" />
+
+The boxplot showed that the total bilateral hippocampal volume between commonly used methods are well correlated. Within disease categories (i.e. CN, LMCI and AD), MAGeTbrain is consistently well correlated to SNT volumes, but appears to slightly over-estimate the volume of the AD hippocampus compared to the SNT segmentations.
+
+
+Related citations:
+_Jon Pipitone, Min Tae M Park, Julie Winterburn, Tristram A Lett, Jason P Lerch, Jens C Pruessner, Martin Lepage, Aristotle N Voineskos, and M Mallar Chakravarty. Multi-atlas segmentation of the whole hippocampus and subfields using multiple automatically generated templates. Neuroimage, 101:494–512, November 2014.
+[(doi:10.1016/j.neuroimage.2014.04.054)](https://www.sciencedirect.com/science/article/pii/S1053811914003346?via%3Dihub)_
 
 ### 5.1.2. Cortical surface parcellations 
 Cortical surfaces can be parcellated into anatomically and functionally meaningful regions. This fascilitates identification and characterization of morphometric and connectivity alterations in the brain that may occur as a result of a disease or aging. 
