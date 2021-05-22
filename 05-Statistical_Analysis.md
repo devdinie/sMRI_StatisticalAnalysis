@@ -97,7 +97,7 @@ plotting.plot_roi(roi_img=seg_labels, bg_img=T1w_img, alpha=0.9, cmap="cool",dim
 Within your working directory, there will be several output files created by FSL. Here, the _first.nii.gz_ is the original output, while the _corr.nii.gz_ files may have had boundary correction applied to them (depending on the structure).
 (Fun fact: the value assigned to _dim_ in _plotting_roi_ controls the visibility of the background image). 
 
-<img src="/fig/episode_5/5_HippL_FSL.png" width="400" height="170" />
+<img src="/fig/episode_5/5_HippL_FSL.png" width="470" height="200" />
 The volume of the segemented region can be found using _imagestats_. 
 
 (You will also be able to notice a considerable difference in volume estimations in _first.nii.gz_ and _corr.nii.gz_.) 
