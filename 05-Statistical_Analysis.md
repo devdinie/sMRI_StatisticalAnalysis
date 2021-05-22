@@ -168,7 +168,8 @@ reconflow.run('MultiProc', plugin_args={'n_procs': 8})
 If you want to use the same dataset made available by nipype, you can download and arrange the data by running [this script](/5_OtherFiles/5_Download_NiPypeTutorial_Data.sh). 
 Also, make sure that your ```$FREESURFER_HOME``` (```path/to/freesufer/location```) and ```$SUBJECTS_DIR``` (```/path/to/subjects/outputs``` e.g. ```SUBJECTS_DIR=~/nipype_tutorial/freesurfer```) paths are set properly.
 
-Once the process in complete, your folder structure containing original data and output files will be as as follows:
+Once the process in complete, your folder structure containing original data and output files will be available in your working directory/SUBJECTS_DIR.
+<details> <summary markdown="span">Click here to take a look at the overview of the folder structure.</summary>
 
 ```
 nipype_tutorial
@@ -190,6 +191,8 @@ nipype_tutorial
     ...
     |_sub010
 ```
+</details>
+
 Considering a single subject: The required stats could be found within the respective folders. Segmentation statistics of subcortical structures can be found in _aseg.stats_ . When using FreeSurfer, the segmented left hippocampal volume is: ``` 4287 mm^3 ```
 
 ##### Volumetric Analysis: ROI differences in Young, Middle Aged, Nondemented and Demented Older Adults
@@ -217,7 +220,7 @@ sns.boxplot(ax=axes[1, 1], data=oasis_aseg, x='CDR', y='Left-Hippocampus VOLUME'
 sns.boxplot(ax=axes[1, 2], data=oasis_aseg, x='CDR', y='Left-Lateral-Ventricle VOLUME',hue='CDR',palette='pastel')
 ```
 We can observe that the ROI volumes are smaller when subject is likely to have a higher CDR.
-<img src="/fig/episode_5/5_SubVolumes.png" width="800" height="350" />
+<img src="/fig/episode_5/5_SubVolumes.png" width="760" height="390" />
 
 💡 **Exercise 5.2**: Can you find the effect size for the ROIs in adults over 60? (Download the .csv [here](/5_OtherFiles/OASIS_FS_ASEG_OVER60.csv))
 
@@ -242,9 +245,9 @@ def calc_effect_size(group1,group2):
 
 The output we got looks like:
 
-<img src="/fig/episode_5/5_EffectSize.png" width="400" height="170" />
+<img src="/fig/episode_5/5_EffectSize.png" width="400" height="230" />
 
-Click here to look at releated analysis from studies!
+Click [here](/5_OtherFiles/5_RelatedStudies_statAnalysis.md) to look at releated analysis from studies! 
 
 ### 5.1.2. Cortical surface parcellations 
 Cortical surfaces can be parcellated into anatomically and functionally meaningful regions. This fascilitates identification and characterization of morphometric and connectivity alterations in the brain that may occur as a result of a disease or aging. 
