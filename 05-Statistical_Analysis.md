@@ -23,7 +23,7 @@ Subcortical atlas parcellations
 * THOMAS Atlas (Saranathan 2019)
 
 #### 5.1.1.1. Visualizing anatomical atlases
-##### • Cortical Parcellations
+#### • Cortical Parcellations
 ###### Automated Anatomical Labeling (Tzourio-Mazoyer 2002)
 ```
 dataset = datasets.fetch_atlas_aal('SPM12')
@@ -53,7 +53,7 @@ plotting.plot_roi(atlas_filename, title="Harvard Oxford atlas")
 <img src="/fig/episode_5/5_Fig3_corAtlas_Harvard-Oxford.png" width="400" height="170" />
 
 
-##### • Subcortical Parcellations
+#### • Subcortical Parcellations
 ###### CIT168 Reinforcement Learning Atlas (Pauli 2017)
 ```
 dataset = datasets.fetch_atlas_pauli_2017()
@@ -68,7 +68,7 @@ Software such as FSL and FreeSurfer can be used for segmentation of regions of i
 
 Several interfaces available through NiPype maybe used for this task. We will be looking at one example for the sake of simplicity.
 
-##### • Using FSL to segment a region of interest
+#### • Using FSL to segment a region of interest
 We use a single sMRI from the haxby dataset and make a copy of it in our current working directory to make processing easier.
 ```
 haxby_dataset = datasets.fetch_haxby()
@@ -120,7 +120,7 @@ OUT[]: 4189.0
 The volume of the segemented region can be found using _imagestats_.
   </details>
 
-##### • Using FreeSurfer to segment regions of interest
+#### • Using FreeSurfer to segment regions of interest
 Similar to FSL, FreeSurfer can be used through the NiPype interface as well. The ```recon-all``` process on freesurfer allows us to obtain all or any part of the cortical reconstruction process. This process is fairly time consuming. The code below, adapted from the [NiPype beginners guide](https://miykael.github.io/nipype-beginner-s-guide/prepareData.html), can be used to achieve this.  
 
 ```
@@ -201,9 +201,13 @@ nipype_tutorial
 ```
 </details>
 
-Considering a single subject: The required stats could be found within the respective folders. Segmentation statistics of subcortical structures can be found in _aseg.stats_ . When using FreeSurfer, the segmented left hippocampal volume is: ``` 4287 mm^3 ```
+Considering a single subject: The required stats could be found within the respective folders. Segmentation statistics of subcortical structures can be found in _aseg.stats_ . 
 
-##### • ROI differences in Young, Middle Aged, Nondemented and Demented Older Adults
+A _.zip_ file containing FreeSurfer ```recon-all``` outputs for a single subject ```sub001``` can be downloaded [here](https://minhaskamal.github.io/DownGit/#/home?url=https://github.com/devdinie/sMRI_StatisticalAnalysis/tree/main/5_OtherFiles/sub001_ReconAll).
+
+For this subject, the segmented left hippocampal volume is: ``` 4287 mm^3 ```
+
+#### • ROI differences in Young, Middle Aged, Nondemented and Demented Older Adults
 
 Once a dataset is processed, the volumes of each ROI can be collected and included in a .csv file (or other formats you prefer). 
 
@@ -231,7 +235,7 @@ sns.boxplot(ax=axes[1, 2], data=oasis_aseg, x='CDR', y='Left-Lateral-Ventricle V
 We can observe that the ROI volumes are smaller when subject is likely to have a higher CDR.
 <img src="/fig/episode_5/5_SubVolumes.png" width="760" height="390" />
 
-💡 **Exercise 5.2**: Can you find the effect size for the ROIs in adults over 60? (Download the .csv [here](/5_OtherFiles/OASIS_FS_ASEG_OVER60.csv))
+💡 **Exercise 5.2**: Can you find the effect size for the ROIs in adults over 60? (Download the .csv [here](/5_OtherFiles/OASIS_FS_ASEG_OVER60.csv)).
 
 <details>
   <summary markdown="span">Hint: You need to look cohen's D effect size between demented and non-demented adults. Click for more help</summary>
@@ -280,10 +284,10 @@ plotting.plot_surf_roi(fsaverage['pial_left'], roi_map=parcellation,hemi='left',
 ```
 <img src="/fig/episode_5/5_Fig4_corAtlas_Destrieux.png" width="230" height="170" />
 
-##### • Using FreeSurfer to find Cortical thicknesses
+#### • Using FreeSurfer to find Cortical thicknesses
 Regional cortical thickness values are also provided by the FreeSurfer ```recon-all``` process. 
 An easy way to view this requires the ```freesurfer-stats``` package (which you can get using ```pip install freesurfer-stats```). 
-For example, if we were to view the related stats for the right hemisphere [_rh.aparc.stats] in the ```ReconAll``` outputs for ```sub001``` provided here, then we can:
+For example, if we were to view the related stats for the right hemisphere [_rh.aparc.stats_] in the ```ReconAll``` outputs for ```sub001``` provided [here](https://github.com/devdinie/sMRI_StatisticalAnalysis/tree/main/5_OtherFiles/sub001_ReconAll) [Click to download .zip](https://minhaskamal.github.io/DownGit/#/home?url=https://github.com/devdinie/sMRI_StatisticalAnalysis/tree/main/5_OtherFiles/sub001_ReconAll), then we can:
 
 ```
 from freesurfer_stats import CorticalParcellationStats
@@ -312,10 +316,10 @@ OUT[] mean_thickness_mm
       0	2.46222
 ```
 
-##### • Cortical thickness analysis: Effects of aerobic exercise on regional cortical thicknesses of patients with schizophrenia
+#### • Cortical thickness analysis: Effects of aerobic exercise on regional cortical thicknesses of patients with schizophrenia
 
 Data and Processed Data used in this example are adapted from [https://osf.io/sfgxk/](https://osf.io/sfgxk/), with reference to the paper by [Takahashi et al (2020)](https://www.sciencedirect.com/science/article/pii/S092099641930502X).
-Download the adapted .csv file containing measures provided by Freesurfer recon-all for this dataset [here](/5_OtherFiles/cortical_thickness_results.csv) 
+Download the adapted .csv file containing measures provided by Freesurfer recon-all for this dataset [here](/5_OtherFiles/cortical_thickness_results.csv). 
 
 In this study the effect of aerobic exercise on cortical thickness was observed across 3 different groups at 4 time points over a period of 24 weeks (i.e. at 0, 6, 12 and 24 weeks). The given .csv file contains cortical thickness for 8 regions. 
 
