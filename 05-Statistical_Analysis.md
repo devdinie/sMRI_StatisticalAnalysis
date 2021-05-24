@@ -384,14 +384,121 @@ To clearly observe the effect of aerobic exercise on schizophrenia patients and 
 </details>
 
 
-## 5.2. Voxel Based Morphometry
+## 5.2. Voxel-Based Morphometry (VBM)
 
 Voxel-based morphometry (VBM) involves a voxel-wise comparison of the local concentration of gray matter between two groups of subjects. This process involves spatially normalizing all the images in the dataset being used into the same stereotactic space. The gray matter (GM) regions are then segmented from the spatially normalized images and the gray matter segments are smoothed afterwards. Voxel-wise parametric statistical tests which compare the smoothed GM images from the two groups are performed. Corrections for multiple comparisons are
 made using the theory of Gaussian random fields. 
 
+#### • Preprocessing for VBM
+
+The statistical parametric mapping software (latest: SPM12) provided through the NiPype interface allows preprocessing required for VBM analysis.
+[SPM12](https://www.fil.ion.ucl.ac.uk/spm/software/spm12/) can be downloaded [here](https://www.fil.ion.ucl.ac.uk/spm/software/download/) and MATLAB (> ver 7) needs to have been installed.
+
+The [tutorial](https://www.fil.ion.ucl.ac.uk/~john/misc/VBMclass10.pdf) by Ashburner and [installation guide](https://en.wikibooks.org/wiki/SPM/Installation_on_64bit_Mac_OS_(Intel)#Installation_2) in the SPM wiki will be helpful during setting up. Make sure the following is included when running your code:
+
+```spm.SPMCommand.set_mlab_paths(paths='/path/to/spm12/', matlab_cmd='/path/to/MATLAB_R20xxa.app/bin/matlab -nodesktop -nosplash')```
+
+The process using SPM mainly involves three steps:
+1. Using NewSegment
+2. Using DARTEL
+3. Normlizing to MNI space
+
+To observe the outputs over these tasks, we have used a single T1w image ```structural.nii```.
+
+1. Using NewSegment
+
+This lets us separate structural images into different tissue classes. Tissues types identified by this process are grey matter (c1), white matter (c2) and CSF (c3), where an output image with the filename format _cXstructural.nii_ will be generated for each tissue type. 
+
+Two more images with the filname format _rcXstructural.nii_ will also be generated, which are the DARTEL imported versions of the tissue class images,
+which will be aligned together next.
+
+```
+import nipype
+import nipype.interfaces.spm    as spm
+import nipype.interfaces.matlab as matlab
+
+spm.SPMCommand.set_mlab_paths(paths=os.path.join(tutorial_root,'/VBM/spm12/'), matlab_cmd='/Applications/MATLAB_R2021a.app/bin/matlab -nodesktop -nosplash')
+```
+
+```
+seg = spm.NewSegment()
+seg.inputs.channel_files = 'structural.nii'
+
+tissue1 = ((os.path.join(tutorial_root,'/VBM/spm12/tpm/TPM.nii'), 1), 2, (True,True)  , (False, False))
+tissue2 = ((os.path.join(tutorial_root,'/VBM/spm12/tpm/TPM.nii'), 2), 2, (True,True)  , (False, False))
+tissue3 = ((os.path.join(tutorial_root,'/VBM/spm12/tpm/TPM.nii'), 3), 2, (True,False) , (False, False))
+tissue4 = ((os.path.join(tutorial_root,'/VBM/spm12/tpm/TPM.nii'), 4), 2, (False,False), (False, False))
+tissue5 = ((os.path.join(tutorial_root,'/VBM/spm12/tpm/TPM.nii'), 5), 2, (False,False), (False, False))
+
+seg.inputs.tissues = [tissue1, tissue2, tissue3, tissue4, tissue5]
+seg.run()
+
+```
+Outputs from this step will be as follows:
+
+<img src="/fig/episode_5/5_VBM_PP_NewSeg.png" width="700" height="310" />
+
+2. Run DARTEL (create Templates)
+
+This step is performed to increase the accuracy of inter-subject alignment by modelling the shape of each brain using numerous parameters (specifically, 3 parameters per voxel). During this process, gray matter between images are aligned, while simultaneously aligning white matter. Average template data are generated as a result, and data are iteratively assigned to this. The inputs to this stage are the “rc1” and “rc2” images, that are generated in the previous step. The outputs generated during this stage include the “u_rc1” file, as well as a series of template images.
+
+This step can be processed using the following code.
+
+```
+rc1_NewSeg1 = nib.load('rc1structural_1.nii')
+rc2_NewSeg1 = nib.load('rc2structural_1.nii')
+
+rc1_NewSeg2 = nib.load('rc1structural_2.nii')
+rc2_NewSeg2 = nib.load('rc2structural_2.nii')
+
+dartel = spm.DARTEL()
+dartel.inputs.image_files = [['rc1structural_1.nii','rc1structural_2.nii'],['rc2structural_1.nii', 'rc2structural_2.nii']]
+dartel.run()
+```
+
+The inputs to this step (rc1 and rc2 for ```structural_1.nii``` and ```structural_2.nii```) are shown below:
+
+<img src="/fig/episode_5/5_VBM_PP_DARTELinput.png" width="700" height="310" />
+
+The ```u_rc1``` outputs generated in this stage (```u_rc1structural_1_Template.nii``` and ```u_rc1structural_2_Template.nii```) and the final template (i.e. ```Template_6.nii```), will be inputs to the next stage in VBM preprocessing. 
+
+
+3. Normalise to MNI Space
+
+This step is to generate smoothed, spatially normalised and Jacobian scaled grey matter images in MNI space, using the u_rc1 files from the previous step.
+
+The smoothed images represent the regional volume of tissue. Statistical analysis are performed on these data. Therefore, it is likely that significant differences among the preprocessed data will better reflect differences among the regional volumes of grey matter.
+
+To achieve this, the following code can be used:
+
+```
+urc1_dartel_1 = nib.load('u_rc1structural_1_Template.nii')
+urc1_dartel_2 = nib.load('u_rc1structural_2_Template.nii')
+
+c1_structural_1 = nib.load('c1structural_1.nii')
+c1_structural_2 = nib.load('c1structural_2.nii')
+
+nm = spm.DARTELNorm2MNI()
+
+nm.inputs.template_file   = 'Template_6.nii'
+nm.inputs.flowfield_files = ['u_rc1structural_1_Template.nii','u_rc1structural_2_Template.nii']
+nm.inputs.apply_to_files  = ['c1structural_1.nii', 'c1structural_1.nii']
+nm.inputs.modulate        = True
+nm.run()
+```
+Example of the expected output:
+
+<img src="/fig/episode_5/5_VBM_PP_norm2mni_OP.png" width="400" height="170" />
+
+
 A simple example for a VBM application is detailed below.
 
+#### • Voxel-based morphometry to study the relationship between aging and gray matter density
+The data used in this application is from the OASIS project. If you use it, you need to agree with the data usage agreement available on the website.
+
+It has been run through a standard VBM pipeline (using SPM8 and NewSegment) to create VBM maps, which we study here.
 
 
-
-
+<sub> Related citations: </sub>\
+<sub> "[Voxel-Based Morphometry—The Methods](https://www.fil.ion.ucl.ac.uk/~karl/Voxel-Based%20Morphometry.pdf)", John Ashburner and Karl J. Friston, NeuroImage(2000). </sub>\
+<sub> "[Voxel Based Morphometry of the Human Brain: Methods and Applications](https://www.fil.ion.ucl.ac.uk/spm/doc/papers/am_vbmreview.pdf)", Andrea Machelli, Cathy Price, Karl Friston, John Ashburner, Curr. Med. Imaging Reviews (2005). </sub>
