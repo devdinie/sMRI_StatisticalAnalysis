@@ -23,7 +23,7 @@ Subcortical atlas parcellations
 * THOMAS Atlas (Saranathan 2019)
 
 #### 5.1.1.1. Visualizing anatomical atlases
-##### Cortical Parcellations
+##### • Cortical Parcellations
 ###### Automated Anatomical Labeling (Tzourio-Mazoyer 2002)
 ```
 dataset = datasets.fetch_atlas_aal('SPM12')
@@ -53,7 +53,7 @@ plotting.plot_roi(atlas_filename, title="Harvard Oxford atlas")
 <img src="/fig/episode_5/5_Fig3_corAtlas_Harvard-Oxford.png" width="400" height="170" />
 
 
-##### Subcortical Parcellations
+##### • Subcortical Parcellations
 ###### CIT168 Reinforcement Learning Atlas (Pauli 2017)
 ```
 dataset = datasets.fetch_atlas_pauli_2017()
@@ -68,7 +68,7 @@ Software such as FSL and FreeSurfer can be used for segmentation of regions of i
 
 Several interfaces available through NiPype maybe used for this task. We will be looking at one example for the sake of simplicity.
 
-##### Using FSL to segment a region of interest
+##### • Using FSL to segment a region of interest
 We use a single sMRI from the haxby dataset and make a copy of it in our current working directory to make processing easier.
 ```
 haxby_dataset = datasets.fetch_haxby()
@@ -110,9 +110,17 @@ imagestats.mask_volume(nib.Nifti1Image(seg_labels.get_fdata(), np.eye(4)))
 ```
 OUT[]: 4189.0
 ```
-💡 **Exercise 5.1**: Can you follow the same steps above to segment a different structure of interest? 
+💡 **Exercise 5.1**: (a) Can you follow the same steps above to segment a different structure of interest? <br/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                     (b) Can you edit the code above (using the suggestions in the comments) to segment all ROIs using FSL FIRST? 
+<details> <summary markdown="span"> Click here to see what the overlayed segmented labels would look like.</summary>
+  
+<img src="/fig/episode_5/5_All_FSL.png" width="1000" height="300" />
+  
+The volume of the segemented region can be found using _imagestats_.
+  </details>
 
-##### Using FreeSurfer to segment regions of interest
+##### • Using FreeSurfer to segment regions of interest
 Similar to FSL, FreeSurfer can be used through the NiPype interface as well. The ```recon-all``` process on freesurfer allows us to obtain all or any part of the cortical reconstruction process. This process is fairly time consuming. The code below, adapted from the [NiPype beginners guide](https://miykael.github.io/nipype-beginner-s-guide/prepareData.html), can be used to achieve this.  
 
 ```
@@ -195,7 +203,8 @@ nipype_tutorial
 
 Considering a single subject: The required stats could be found within the respective folders. Segmentation statistics of subcortical structures can be found in _aseg.stats_ . When using FreeSurfer, the segmented left hippocampal volume is: ``` 4287 mm^3 ```
 
-##### Volumetric Analysis: ROI differences in Young, Middle Aged, Nondemented and Demented Older Adults
+##### • ROI differences in Young, Middle Aged, Nondemented and Demented Older Adults
+
 Once a dataset is processed, the volumes of each ROI can be collected and included in a .csv file (or other formats you prefer). 
 
 As processing takes time, for this example we use processed freesurfer outputs for ROI that is available on the OASIS website. The summarized freesurfer outputs from the OASIS1 dataset can be downloaded [here](/5_OtherFiles/OASIS_FS_ASEG.csv).
@@ -270,3 +279,102 @@ plotting.plot_surf_roi(fsaverage['pial_left'], roi_map=parcellation,hemi='left',
                        view='lateral',bg_map=fsaverage['sulc_left'], bg_on_data=True,darkness=.5)
 ```
 <img src="/fig/episode_5/5_Fig4_corAtlas_Destrieux.png" width="230" height="170" />
+
+##### • Using FreeSurfer to find Cortical thicknesses
+Regional cortical thickness values are also provided by the FreeSurfer ```recon-all``` process. 
+An easy way to view this requires the ```freesurfer-stats``` package (which you can get using ```pip install freesurfer-stats```). 
+For example, if we were to view the related stats for the right hemisphere [_rh.aparc.stats] in the ```ReconAll``` outputs for ```sub001``` provided here, then we can:
+
+```
+from freesurfer_stats import CorticalParcellationStats
+stats = CorticalParcellationStats.read('/Users/swapna/DataCarpentry_sMRI/nipype_tutorial/freesurfer/sub001/stats/rh.aparc.stats')
+stats.headers['subjectname']
+stats.headers['CreationTime'].isoformat()
+stats.headers['cvs_version']
+stats.headers['cmdline'][:64]
+stats.hemisphere
+```
+```
+stats.structural_measurements
+```
+The whole brain measurements can be viewed using:
+
+```
+stats.whole_brain_measurements
+```
+If we were to view the mean thickness from the whole brain measurements loaded, we can:
+
+```
+stats.whole_brain_measurements[['mean_thickness_mm']]
+```
+```
+OUT[] mean_thickness_mm
+      0	2.46222
+```
+
+##### • Cortical thickness analysis: Effects of aerobic exercise on regional cortical thicknesses of patients with schizophrenia
+
+Data and Processed Data used in this example are adapted from [https://osf.io/sfgxk/](https://osf.io/sfgxk/), with reference to the paper by [Takahashi et al (2020)](https://www.sciencedirect.com/science/article/pii/S092099641930502X).
+Download the adapted .csv file containing measures provided by Freesurfer recon-all for this dataset [here](/5_OtherFiles/cortical_thickness_results.csv) 
+
+In this study the effect of aerobic exercise on cortical thickness was observed across 3 different groups at 4 time points over a period of 24 weeks (i.e. at 0, 6, 12 and 24 weeks). The given .csv file contains cortical thickness for 8 regions. 
+
+The 3 groups are: 1. Schizophrenia patients with exercise (SCZ_EXERCISE) 2. Schizophrenia without exercise (SCZ_EXERCISECONT) and 3. Healthy controls with exercise (HC_EXERCISE).
+The 8 regions of interest include left and right entorhinal, parahippocampal, medial prefrontal and lateral prefrontal cortices.
+
+You can load and view the data from the give .csv file using the following code:
+
+```
+SCZ_CT = pd.read_csv("cortical_thickness_results.csv")
+```
+The cortical thicknesses for the ROIs can be plotted as follows over the four time points.
+
+```
+fig, axes = plt.subplots(2, 4, figsize=(18, 10))
+row=0; colm=2
+for col in range(2,10): 
+    colm=col-2
+    if col>5: row=1; colm=colm-4
+
+    sns.boxplot(ax=axes[row, colm-2],x='time point', y=df.columns.tolist()[col], 
+                width=0.5, data=df, hue='Experimental_group', 
+                palette='pastel').set(xlabel='Time point/weeks', ylabel='Cortical thickness/mm',title=df.columns.tolist()[col])
+    
+    sns.stripplot(ax=axes[row, colm-2],x='time point', y=df.columns.tolist()[col], data=df, 
+                  hue='Experimental_group',jitter=0.5, dodge=True,alpha=0.7,palette='pastel')
+
+    h, l = axes[row, colm-2].get_legend_handles_labels()
+    axes[row, colm-2].legend(h, ['SCZ_EXERCISE', 'SCZ_EXERCISECONT','HC_EXERCISE'], title="EXPERIMENTAL GROUP:", loc='lower right',fontsize='small')
+
+```
+
+<img src="/fig/episode_5/5_CorticalThickness_Img1.png" width="990" height="520" />
+
+
+To clearly observe the effect of aerobic exercise on schizophrenia patients and schizophrenia controls, the mean cortical thickness of across all ROIs for each subject can be observed over time.
+
+💡 **Exercise 5.3**:
+                     (a) For each ROI, can you calculate the mean cortical thickness across the subjects for each group at each time point?
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                     (b) What do you observe when the cortical thickness for each subject is plotted over the 4 time points for:                 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                     (i)  the schizophrenia group with exercise and         
+                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                     (ii) the schizophrenia group controls.
+
+<details> <summary markdown="span">Click here for hints (overview of the expected outputs).</summary>
+  
+  (a) Mean cortical thickness across the subjects for each group at each time point
+  
+  <img src="/fig/episode_5/5_MeanCT_forGroups_A.png" width="700" height="420" />
+  
+  (b) CT for each subject over the 4 time points for SCZ_EXERCISE
+  
+  For example, for the left entorhinal cortex
+  
+  <img src="/fig/episode_5/5_CTchanges_SCZexercise_Bi.png" width="700" height="310" />
+
+  
+</details>
+
+
