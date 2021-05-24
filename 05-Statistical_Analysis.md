@@ -117,7 +117,7 @@ OUT[]: 4189.0
   
 <img src="/fig/episode_5/5_All_FSL.png" width="1000" height="300" />
   
-The volume of the segemented region can be found using _imagestats_.
+The volume of the segemented regions can be found using _imagestats_.
   </details>
 
 #### • Using FreeSurfer to segment regions of interest
@@ -173,7 +173,7 @@ reconflow.connect([(infosource, reconall, [('subject_id', 'subject_id')]),
 reconflow.run('MultiProc', plugin_args={'n_procs': 8})
 
 ```
-If you want to use the same dataset made available by nipype, you can download and arrange the data by running [this script](/5_OtherFiles/5_Download_NiPypeTutorial_Data.sh). 
+If you want to use the same dataset made available by nipype, you can download and arrange the data by running [this script](/_extras/5_OtherFiles/5_Download_NiPypeTutorial_Data.sh). 
 Also, make sure that your ```$FREESURFER_HOME``` (```path/to/freesufer/location```) and ```$SUBJECTS_DIR``` (```/path/to/subjects/outputs``` e.g. ```SUBJECTS_DIR=~/nipype_tutorial/freesurfer```) paths are set properly.
 
 Once the process in complete, your folder structure containing original data and output files will be available in your working directory/SUBJECTS_DIR.
@@ -211,7 +211,7 @@ For this subject, the segmented left hippocampal volume is: ``` 4287 mm^3 ```
 
 Once a dataset is processed, the volumes of each ROI can be collected and included in a .csv file (or other formats you prefer). 
 
-As processing takes time, for this example we use processed freesurfer outputs for ROI that is available on the OASIS website. The summarized freesurfer outputs from the OASIS1 dataset can be downloaded [here](/5_OtherFiles/OASIS_FS_ASEG.csv).
+As processing takes time, for this example we use processed freesurfer outputs for ROI that is available on the OASIS website. The summarized freesurfer outputs from the OASIS1 dataset can be downloaded [here](/_extras/5_OtherFiles/OASIS_FS_ASEG.csv).
 Older adults who are demented at the time of scanning and those who are progressing have been given a Clinical Dementia Rating (CDR).
 
 We can observe the ROI volumetric differences in adults and how these volumes vary based on their CDR. For this example, we consider 6 regions of interest: Left/Right Amygdala, Hippocampus and Lateral ventricle.
@@ -235,7 +235,7 @@ sns.boxplot(ax=axes[1, 2], data=oasis_aseg, x='CDR', y='Left-Lateral-Ventricle V
 We can observe that the ROI volumes are smaller when subject is likely to have a higher CDR.
 <img src="/fig/episode_5/5_SubVolumes.png" width="760" height="390" />
 
-💡 **Exercise 5.2**: Can you find the effect size for the ROIs in adults over 60? (Download the .csv [here](/5_OtherFiles/OASIS_FS_ASEG_OVER60.csv)).
+💡 **Exercise 5.2**: Can you find the effect size for the ROIs in adults over 60? (Download the .csv [here](/_extras/5_OtherFiles/OASIS_FS_ASEG_OVER60.csv)).
 
 <details>
   <summary markdown="span">Hint: You need to look cohen's D effect size between demented and non-demented adults. Click for more help</summary>
@@ -260,7 +260,7 @@ The output we got looks like:
 
 <img src="/fig/episode_5/5_EffectSize.png" width="400" height="230" />
 
-Click [here](/5_OtherFiles/5_RelatedStudies_statAnalysis.md) to look at releated analysis from studies! 
+Click [here](/_extras/5_OtherFiles/5_RelatedStudies_statAnalysis.md) to look at releated analysis from studies! 
 
 ### 5.1.2. Cortical surface parcellations 
 Cortical surfaces can be parcellated into anatomically and functionally meaningful regions. This fascilitates identification and characterization of morphometric and connectivity alterations in the brain that may occur as a result of a disease or aging. 
@@ -321,7 +321,7 @@ OUT[] mean_thickness_mm
 #### • Cortical thickness analysis: Effects of aerobic exercise on regional cortical thicknesses of patients with schizophrenia
 
 Data and Processed Data used in this example are adapted from [https://osf.io/sfgxk/](https://osf.io/sfgxk/), with reference to the paper by [Takahashi et al (2020)](https://www.sciencedirect.com/science/article/pii/S092099641930502X).
-Download the adapted .csv file containing measures provided by Freesurfer recon-all for this dataset [here](/5_OtherFiles/cortical_thickness_results.csv). 
+Download the adapted .csv file containing measures provided by Freesurfer recon-all for this dataset [here](/_extras/5_OtherFiles/cortical_thickness_results.csv). 
 
 In this study the effect of aerobic exercise on cortical thickness was observed across 3 different groups at 4 time points over a period of 24 weeks (i.e. at 0, 6, 12 and 24 weeks). The given .csv file contains cortical thickness for 8 regions. 
 
@@ -337,21 +337,20 @@ The cortical thicknesses for the ROIs can be plotted as follows over the four ti
 
 ```
 fig, axes = plt.subplots(2, 4, figsize=(18, 10))
-row=0; colm=2
-for col in range(2,10): 
+row=0; colm=3
+for col in range(3,11): 
     colm=col-2
-    if col>5: row=1; colm=colm-4
-
-    sns.boxplot(ax=axes[row, colm-2],x='time point', y=df.columns.tolist()[col], 
-                width=0.5, data=df, hue='Experimental_group', 
-                palette='pastel').set(xlabel='Time point/weeks', ylabel='Cortical thickness/mm',title=df.columns.tolist()[col])
+    if col>6: row=1; colm=colm-4
     
-    sns.stripplot(ax=axes[row, colm-2],x='time point', y=df.columns.tolist()[col], data=df, 
+    sns.boxplot(ax=axes[row, colm-2],x='time point', y=SCZ_CT.columns.tolist()[col], 
+                width=0.5, data=SCZ_CT, hue='Experimental_group', 
+                palette='pastel').set(xlabel='Time point/weeks', ylabel='Cortical thickness/mm',title=SCZ_CT.columns.tolist()[col])
+    
+    sns.stripplot(ax=axes[row, colm-2],x='time point', y=SCZ_CT.columns.tolist()[col], data=SCZ_CT, 
                   hue='Experimental_group',jitter=0.5, dodge=True,alpha=0.7,palette='pastel')
 
     h, l = axes[row, colm-2].get_legend_handles_labels()
     axes[row, colm-2].legend(h, ['SCZ_EXERCISE', 'SCZ_EXERCISECONT','HC_EXERCISE'], title="EXPERIMENTAL GROUP:", loc='lower right',fontsize='small')
-
 ```
 
 <img src="/fig/episode_5/5_CorticalThickness_Img1.png" width="990" height="520" />
@@ -374,13 +373,25 @@ To clearly observe the effect of aerobic exercise on schizophrenia patients and 
   
   <img src="/fig/episode_5/5_MeanCT_forGroups_A.png" width="700" height="420" />
   
+  _Hint_ : Refer to the the _groupby_ attribute in pandas.Dataframe ( [click for example](https://pandas.pydata.org/docs/reference/api/pandas.core.groupby.GroupBy.mean.html) ). Specifically, you would want to group by both experimental group and time point, to calculate the mean of the remaining column.
+  
   (b) CT for each subject over the 4 time points for SCZ_EXERCISE
   
   For example, for the left entorhinal cortex
   
   <img src="/fig/episode_5/5_CTchanges_SCZexercise_Bi.png" width="700" height="310" />
 
-  
 </details>
+
+
+## 5.2. Voxel Based Morphometry
+
+Voxel-based morphometry (VBM) involves a voxel-wise comparison of the local concentration of gray matter between two groups of subjects. This process involves spatially normalizing all the images in the dataset being used into the same stereotactic space. The gray matter (GM) regions are then segmented from the spatially normalized images and the gray matter segments are smoothed afterwards. Voxel-wise parametric statistical tests which compare the smoothed GM images from the two groups are performed. Corrections for multiple comparisons are
+made using the theory of Gaussian random fields. 
+
+A simple example for a VBM application is detailed below.
+
+
+
 
 
