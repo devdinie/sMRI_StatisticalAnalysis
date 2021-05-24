@@ -403,9 +403,9 @@ The process using SPM mainly involves three steps:
 2. Using DARTEL
 3. Normlizing to MNI space
 
-To observe the outputs over these tasks, we have used a single T1w image ```structural.nii```.
-
 1. Using NewSegment
+
+To observe the outputs over these tasks, we have used a single T1w image ```structural.nii```.
 
 This lets us separate structural images into different tissue classes. Tissues types identified by this process are grey matter (c1), white matter (c2) and CSF (c3), where an output image with the filename format _cXstructural.nii_ will be generated for each tissue type. 
 
