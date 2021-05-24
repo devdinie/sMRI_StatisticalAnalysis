@@ -398,7 +398,7 @@ The [tutorial](https://www.fil.ion.ucl.ac.uk/~john/misc/VBMclass10.pdf) by Ashbu
 
 ```spm.SPMCommand.set_mlab_paths(paths='/path/to/spm12/', matlab_cmd='/path/to/MATLAB_R20xxa.app/bin/matlab -nodesktop -nosplash')```
 
-The process using SPM mainly involves three steps:
+The process using **SPM** mainly involves three steps:
 1. Using NewSegment
 2. Using DARTEL
 3. Normlizing to MNI space
